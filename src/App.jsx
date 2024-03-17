@@ -73,13 +73,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
     paddingHorizontal: 10,
   },
-  addButton: {
-    backgroundColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 40,
-    height: 40,
-  },
   taskItem: {
     backgroundColor: 'white',
     justifyContent: 'center',

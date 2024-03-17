@@ -27,11 +27,10 @@ const App = () => {
           style={styles.input}
           placeholder="タスクの追加"
           value={task}
+          returnKeyType="done"
+          onSubmitEditing={addTask}
           onChangeText={(text) => setTask(text)}
         />
-        <TouchableOpacity style={styles.addButton} onPress={addTask}>
-          <Icon name="add" size={30} color="white" />
-        </TouchableOpacity>
       </View>
       <FlatList
         data={tasks}

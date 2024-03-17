@@ -1,7 +1,8 @@
 import { registerRootComponent } from 'expo';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
   const [task, setTask] = useState('');
@@ -32,17 +33,22 @@ const App = () => {
           onChangeText={(text) => setTask(text)}
         />
       </View>
-      <FlatList
+      <SwipeListView
         data={tasks}
         keyExtractor={(index) => index.toString()}
-        renderItem={({ item, index }) => (
+        renderItem={({ item }) => (
           <View style={styles.taskItem}>
             <Text>{item}</Text>
+          </View>
+        )}
+        renderHiddenItem={({ index }) => (
+          <View style={styles.deleteButton}>
             <TouchableOpacity onPress={() => removeTask(index)}>
-              <Icon name="delete" size={20} color="red" />
+              <Icon name="delete" size={20} color="white" />
             </TouchableOpacity>
           </View>
         )}
+        rightOpenValue={-50}
       />
     </View>
   );
@@ -75,10 +81,17 @@ const styles = StyleSheet.create({
     height: 40,
   },
   taskItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    height: 50,
+  },
+  deleteButton: {
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: 'red',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingRight: 15,
   },
 });
 

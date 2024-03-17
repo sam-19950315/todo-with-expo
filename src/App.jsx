@@ -42,13 +42,19 @@ const App = () => {
           </View>
         )}
         renderHiddenItem={({ index }) => (
-          <View style={styles.deleteButton}>
-            <TouchableOpacity onPress={() => removeTask(index)}>
+          <View style={styles.hiddenItemContainer}>
+            <TouchableOpacity style={[styles.taskButton, styles.doneButton]}>
+              <Icon name="done" size={20} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.taskButton, styles.deleteButton]}
+              onPress={() => removeTask(index)}
+            >
               <Icon name="delete" size={20} color="white" />
             </TouchableOpacity>
           </View>
         )}
-        rightOpenValue={-50}
+        rightOpenValue={-100}
       />
     </View>
   );
@@ -78,13 +84,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     height: 50,
   },
-  deleteButton: {
-    alignItems: 'center',
-    backgroundColor: 'red',
-    flex: 1,
+  hiddenItemContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingRight: 15,
+    alignItems: 'center',
+    height: '100%',
+  },
+  taskButton: {
+    padding: 10,
+  },
+  doneButton: {
+    backgroundColor: 'gray',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
   },
 });
 

@@ -28,39 +28,49 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="タスクの追加"
-          value={task}
-          returnKeyType="done"
-          onSubmitEditing={addTask}
-          onChangeText={(text) => setTask(text)}
+      <View style={styles.header}>
+        <TouchableOpacity>
+          <Text style={styles.editText}>並べ替え</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.main}>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="タスクの追加"
+            value={task}
+            returnKeyType="done"
+            onSubmitEditing={addTask}
+            onChangeText={(text) => setTask(text)}
+          />
+        </View>
+        <SwipeListView
+          data={tasks}
+          keyExtractor={(index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.taskItem}>
+              <Text style={isPressed ? styles.doneTaskItem : null}>{item}</Text>
+            </View>
+          )}
+          renderHiddenItem={({ index }) => (
+            <View style={styles.hiddenItemContainer}>
+              <TouchableOpacity
+                style={[styles.taskButton, styles.doneButton]}
+                onPress={handlePress}
+              >
+                <Icon name="done" size={20} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.taskButton, styles.deleteButton]}
+                onPress={() => removeTask(index)}
+              >
+                <Icon name="delete" size={20} color="white" />
+              </TouchableOpacity>
+            </View>
+          )}
+          rightOpenValue={-100}
         />
       </View>
-      <SwipeListView
-        data={tasks}
-        keyExtractor={(index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.taskItem}>
-            <Text style={isPressed ? styles.doneTaskItem : null}>{item}</Text>
-          </View>
-        )}
-        renderHiddenItem={({ index }) => (
-          <View style={styles.hiddenItemContainer}>
-            <TouchableOpacity style={[styles.taskButton, styles.doneButton]} onPress={handlePress}>
-              <Icon name="done" size={20} color="white" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.taskButton, styles.deleteButton]}
-              onPress={() => removeTask(index)}
-            >
-              <Icon name="delete" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-        )}
-        rightOpenValue={-100}
-      />
     </View>
   );
 };
@@ -68,12 +78,28 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    backgroundColor: 'skyblue',
+    height: 100,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    paddingRight: 20,
+    paddingBottom: 10,
+  },
+  editText: {
+    color: 'white',
+    fontSize: 20,
+    textAlign: 'right',
+  },
+  main: {
+    flex: 1,
     padding: 20,
     backgroundColor: 'white',
   },
   inputContainer: {
     flexDirection: 'row',
-    marginTop: 100,
+    marginTop: 20,
     marginBottom: 10,
   },
   input: {

@@ -60,6 +60,9 @@ const App = () => {
               >
                 <Icon name="done" size={20} color="white" />
               </TouchableOpacity>
+              <TouchableOpacity style={[styles.taskButton, styles.editButton]}>
+                <Icon name="edit" size={20} color="white" />
+              </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.taskButton, styles.deleteButton]}
                 onPress={() => removeTask(index)}
@@ -68,7 +71,7 @@ const App = () => {
               </TouchableOpacity>
             </View>
           )}
-          rightOpenValue={-100}
+          rightOpenValue={-120}
         />
       </View>
     </View>
@@ -130,6 +133,9 @@ const styles = StyleSheet.create({
   },
   doneButton: {
     backgroundColor: 'gray',
+  },
+  editButton: {
+    backgroundColor: 'green',
   },
   deleteButton: {
     backgroundColor: 'red',

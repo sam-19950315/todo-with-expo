@@ -7,6 +7,7 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 const App = () => {
   const [task, setTask] = useState('');
   const [tasks, setTasks] = useState([]);
+  const [isPressed, setIsPressed] = useState(false);
 
   const addTask = () => {
     if (task.trim() !== '') {
@@ -19,6 +20,10 @@ const App = () => {
     const newTasks = [...tasks];
     newTasks.splice(index, 1);
     setTasks(newTasks);
+  };
+
+  const handlePress = () => {
+    setIsPressed(!isPressed);
   };
 
   return (
@@ -38,12 +43,12 @@ const App = () => {
         keyExtractor={(index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.taskItem}>
-            <Text>{item}</Text>
+            <Text style={isPressed ? styles.doneTaskItem : null}>{item}</Text>
           </View>
         )}
         renderHiddenItem={({ index }) => (
           <View style={styles.hiddenItemContainer}>
-            <TouchableOpacity style={[styles.taskButton, styles.doneButton]}>
+            <TouchableOpacity style={[styles.taskButton, styles.doneButton]} onPress={handlePress}>
               <Icon name="done" size={20} color="white" />
             </TouchableOpacity>
             <TouchableOpacity
@@ -83,6 +88,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     height: 50,
+  },
+  doneTaskItem: {
+    color: 'gray',
+    textDecorationLine: 'line-through',
   },
   hiddenItemContainer: {
     flexDirection: 'row',

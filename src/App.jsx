@@ -5,14 +5,14 @@ import { Icon } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
-  const [task, setTask] = useState({ name: '' });
+  const [task, setTask] = useState({ name: '', isPressed: false });
   const [tasks, setTasks] = useState([]);
   const [isPressed, setIsPressed] = useState(false);
 
   const addTask = () => {
     if (task.name.trim() !== '') {
       setTasks([...tasks, task.name]);
-      setTask({ name: '' });
+      setTask({ name: '', isPressed: false });
     }
   };
 
@@ -22,8 +22,8 @@ const App = () => {
     setTasks(newTasks);
   };
 
-  const handlePress = () => {
-    setIsPressed(!isPressed);
+  const handlePress = (index) => {
+    console.log(index);
   };
 
   return (
@@ -56,7 +56,7 @@ const App = () => {
             <View style={styles.hiddenItemContainer}>
               <TouchableOpacity
                 style={[styles.taskButton, styles.doneButton]}
-                onPress={handlePress}
+                onPress={handlePress(index)}
               >
                 <Icon name="done" size={20} color="white" />
               </TouchableOpacity>

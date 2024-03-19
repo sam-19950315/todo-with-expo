@@ -5,14 +5,14 @@ import { Icon } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
-  const [task, setTask] = useState('');
+  const [task, setTask] = useState({ name: '' });
   const [tasks, setTasks] = useState([]);
   const [isPressed, setIsPressed] = useState(false);
 
   const addTask = () => {
-    if (task.trim() !== '') {
-      setTasks([...tasks, task]);
-      setTask('');
+    if (task.name.trim() !== '') {
+      setTasks([...tasks, task.name]);
+      setTask({ name: '' });
     }
   };
 
@@ -38,10 +38,10 @@ const App = () => {
           <TextInput
             style={styles.input}
             placeholder="タスクの追加"
-            value={task}
+            value={task.name}
             returnKeyType="done"
             onSubmitEditing={addTask}
-            onChangeText={(text) => setTask(text)}
+            onChangeText={(text) => setTask({ name: text })}
           />
         </View>
         <SwipeListView

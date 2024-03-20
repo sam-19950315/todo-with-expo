@@ -5,14 +5,14 @@ import { Icon } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
-  const [task, setTask] = useState({ name: '', isPressed: false });
+  const [task, setTask] = useState({ name: '', isCompleted: false });
   const [tasks, setTasks] = useState([]);
-  const [isPressed, setIsPressed] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   const addTask = () => {
     if (task.name.trim() !== '') {
       setTasks([...tasks, task.name]);
-      setTask({ name: '', isPressed: false });
+      setTask({ name: '', isCompleted: false });
     }
   };
 
@@ -49,7 +49,7 @@ const App = () => {
           keyExtractor={(index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.taskItem}>
-              <Text style={isPressed ? styles.doneTaskItem : null}>{item}</Text>
+              <Text style={isCompleted ? styles.doneTaskItem : null}>{item}</Text>
             </View>
           )}
           renderHiddenItem={({ index }) => (

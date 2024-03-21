@@ -11,7 +11,7 @@ const App = () => {
 
   const addTask = () => {
     if (task.name.trim() !== '') {
-      setTasks([...tasks, task.name]);
+      setTasks([...tasks, task]);
       setTask({ name: '', isCompleted: false });
     }
   };
@@ -49,7 +49,7 @@ const App = () => {
           keyExtractor={(index) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.taskItem}>
-              <Text style={isCompleted ? styles.doneTaskItem : null}>{item}</Text>
+              <Text style={isCompleted ? styles.doneTaskItem : null}>{item.name}</Text>
             </View>
           )}
           renderHiddenItem={({ index }) => (

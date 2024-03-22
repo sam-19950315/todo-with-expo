@@ -1,6 +1,6 @@
 import { registerRootComponent } from 'expo';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
@@ -15,12 +15,6 @@ const App = () => {
     }
   };
 
-  const handleRemoveTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
-  };
-
   const handleUpdateTask = (index) => {
     setTasks((prevTasks) => {
       return prevTasks.map((item, i) => {
@@ -31,6 +25,21 @@ const App = () => {
         }
       });
     });
+  };
+
+  const handleRemoveTask = (index) => {
+    const newTasks = [...tasks];
+    newTasks.splice(index, 1);
+    setTasks(newTasks);
+  };
+
+  const onPressRemoveAlert = (index) => {
+    Alert.alert('', `"${tasks[index].name}" を削除しますか？`, [
+      {
+        text: 'いいえ',
+      },
+      { text: 'はい', onPress: () => handleRemoveTask(index) },
+    ]);
   };
 
   return (
@@ -71,7 +80,7 @@ const App = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.taskButton, styles.deleteButton]}
-                onPress={() => handleRemoveTask(index)}
+                onPress={() => onPressRemoveAlert(index)}
               >
                 <Icon name="delete" size={20} color="white" />
               </TouchableOpacity>

@@ -12,7 +12,7 @@ const App = () => {
   const addTask = () => {
     if (task.name.trim() !== '') {
       setTasks([...tasks, task]);
-      setTask({ name: '', isCompleted: false });
+      setTask({ name: '' });
     }
   };
 
@@ -41,14 +41,13 @@ const App = () => {
             value={task.name}
             returnKeyType="done"
             onSubmitEditing={addTask}
-            onChangeText={(text) => setTask({ name: text })}
+            onChangeText={(text) => setTask({ name: text, isCompleted: false })}
           />
         </View>
         <SwipeListView
           data={tasks}
-          keyExtractor={(index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.taskItem}>
+          renderItem={({ item, index }) => (
+            <View key={index} style={styles.taskItem}>
               <Text style={isCompleted ? styles.doneTaskItem : null}>{item.name}</Text>
             </View>
           )}

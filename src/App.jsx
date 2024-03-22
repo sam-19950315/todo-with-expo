@@ -8,14 +8,14 @@ const App = () => {
   const [task, setTask] = useState({ name: '' });
   const [tasks, setTasks] = useState([]);
 
-  const addTask = () => {
+  const handleAddTask = () => {
     if (task.name.trim() !== '') {
       setTasks([...tasks, task]);
       setTask({ name: '' });
     }
   };
 
-  const removeTask = (index) => {
+  const handleRemoveTask = (index) => {
     const newTasks = [...tasks];
     newTasks.splice(index, 1);
     setTasks(newTasks);
@@ -47,7 +47,7 @@ const App = () => {
             placeholder="タスクの追加"
             value={task.name}
             returnKeyType="done"
-            onSubmitEditing={addTask}
+            onSubmitEditing={handleAddTask}
             onChangeText={(text) => setTask({ name: text, isCompleted: false })}
           />
         </View>
@@ -71,7 +71,7 @@ const App = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.taskButton, styles.deleteButton]}
-                onPress={() => removeTask(index)}
+                onPress={() => handleRemoveTask(index)}
               >
                 <Icon name="delete" size={20} color="white" />
               </TouchableOpacity>

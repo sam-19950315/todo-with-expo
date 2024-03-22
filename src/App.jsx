@@ -21,7 +21,7 @@ const App = () => {
     setTasks(newTasks);
   };
 
-  const handleSubmit = (index) => {
+  const handleUpdateTask = (index) => {
     setTasks((prevTasks) => {
       return prevTasks.map((item, i) => {
         if (i === index) {
@@ -62,7 +62,7 @@ const App = () => {
             <View style={styles.hiddenItemContainer}>
               <TouchableOpacity
                 style={[styles.taskButton, styles.doneButton]}
-                onPress={() => handleSubmit(index)}
+                onPress={() => handleUpdateTask(index)}
               >
                 <Icon name="done" size={20} color="white" />
               </TouchableOpacity>

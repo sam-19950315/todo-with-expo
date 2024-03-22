@@ -7,7 +7,6 @@ import { SwipeListView } from 'react-native-swipe-list-view';
 const App = () => {
   const [task, setTask] = useState({ name: '' });
   const [tasks, setTasks] = useState([]);
-  const [isCompleted, setIsCompleted] = useState(false);
 
   const addTask = () => {
     if (task.name.trim() !== '') {
@@ -22,8 +21,16 @@ const App = () => {
     setTasks(newTasks);
   };
 
-  const handlePress = (index) => {
-    console.log(index);
+  const handleSubmit = (index) => {
+    setTasks((prevTasks) => {
+      return prevTasks.map((item, i) => {
+        if (i === index) {
+          return { ...item, isCompleted: !item.isCompleted };
+        } else {
+          return item;
+        }
+      });
+    });
   };
 
   return (
@@ -48,14 +55,14 @@ const App = () => {
           data={tasks}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.taskItem}>
-              <Text style={isCompleted ? styles.doneTaskItem : null}>{item.name}</Text>
+              <Text style={tasks[index].isCompleted ? styles.doneTaskItem : null}>{item.name}</Text>
             </View>
           )}
           renderHiddenItem={({ index }) => (
             <View style={styles.hiddenItemContainer}>
               <TouchableOpacity
                 style={[styles.taskButton, styles.doneButton]}
-                onPress={handlePress(index)}
+                onPress={() => handleSubmit(index)}
               >
                 <Icon name="done" size={20} color="white" />
               </TouchableOpacity>

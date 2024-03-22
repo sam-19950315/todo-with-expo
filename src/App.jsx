@@ -5,7 +5,7 @@ import { Icon } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
-  const [task, setTask] = useState({ name: '', isCompleted: false });
+  const [task, setTask] = useState({ name: '' });
   const [tasks, setTasks] = useState([]);
   const [isCompleted, setIsCompleted] = useState(false);
 

@@ -1,8 +1,7 @@
 import { registerRootComponent } from 'expo';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { SwipeListView } from 'react-native-swipe-list-view';
 
 const App = () => {
   const [task, setTask] = useState({ name: '' });
@@ -19,6 +18,33 @@ const App = () => {
     const updatedTasks = [...tasks];
     updatedTasks[index].name = newName;
     setTasks(updatedTasks);
+  };
+
+  const onPressActionOptions = (index) => {
+    const update = () => {
+      if (tasks[index].isCompleted) {
+        return '未完了に元に戻す';
+      } else {
+        return '完了しました';
+      }
+    };
+
+    Alert.alert(`${tasks[index].name}`, '', [
+      {
+        text: update(),
+        style: 'cancel',
+        onPress: () => handleUpdateTask(index),
+      },
+      {
+        text: '削除します',
+        style: 'destructive',
+        onPress: () => onPressRemoveAlert(index),
+      },
+      {
+        text: 'キャンセル',
+        style: 'cancel',
+      },
+    ]);
   };
 
   const handleUpdateTask = (index) => {
@@ -40,9 +66,10 @@ const App = () => {
   };
 
   const onPressRemoveAlert = (index) => {
-    Alert.alert('', `"${tasks[index].name}" を削除しますか？`, [
+    Alert.alert(`${tasks[index].name}`, `を本当に削除しますか？`, [
       {
         text: 'いいえ',
+        style: 'cancel',
       },
       { text: 'はい', onPress: () => handleRemoveTask(index) },
     ]);
@@ -66,37 +93,28 @@ const App = () => {
             onChangeText={(text) => setTask({ name: text, isCompleted: false })}
           />
         </View>
-        <SwipeListView
+        <FlatList
           data={tasks}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.taskItem}>
-              <TextInput
-                style={tasks[index].isCompleted ? styles.doneTaskItem : null}
-                value={item.name}
-                onChangeText={(newName) => handleEditTask(index, newName)}
-              />
+              <View style={styles.taskItemList}>
+                {tasks[index].isCompleted ? (
+                  <Text style={styles.doneTaskItem}>{item.name}</Text>
+                ) : (
+                  <TextInput
+                    style={styles.inputTaskItem}
+                    value={item.name}
+                    onChangeText={(newName) => handleEditTask(index, newName)}
+                  />
+                )}
+              </View>
+              <View>
+                <TouchableOpacity onPress={() => onPressActionOptions(index)}>
+                  <Icon style={styles.actionButton} name="more-horiz" size={20} color="black" />
+                </TouchableOpacity>
+              </View>
             </View>
           )}
-          renderHiddenItem={({ index }) => (
-            <View style={styles.hiddenItemContainer}>
-              <TouchableOpacity
-                style={[styles.taskButton, styles.doneButton]}
-                onPress={() => handleUpdateTask(index)}
-              >
-                <Icon name="done" size={20} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.taskButton, styles.editButton]}>
-                <Icon name="edit" size={20} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.taskButton, styles.deleteButton]}
-                onPress={() => onPressRemoveAlert(index)}
-              >
-                <Icon name="delete" size={20} color="white" />
-              </TouchableOpacity>
-            </View>
-          )}
-          rightOpenValue={-120}
         />
       </View>
     </View>
@@ -139,31 +157,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   taskItem: {
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    height: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  taskItemList: {
+    flex: 1,
   },
   doneTaskItem: {
     color: 'gray',
     textDecorationLine: 'line-through',
   },
-  hiddenItemContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    height: '100%',
+  inputTaskItem: {
+    flexGrow: 1,
+    width: '100%',
   },
-  taskButton: {
+  actionButton: {
     padding: 10,
-  },
-  doneButton: {
-    backgroundColor: 'gray',
-  },
-  editButton: {
-    backgroundColor: 'green',
-  },
-  deleteButton: {
-    backgroundColor: 'red',
   },
 });
 

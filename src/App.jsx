@@ -15,6 +15,12 @@ const App = () => {
     }
   };
 
+  const handleEditTask = (index, newName) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].name = newName;
+    setTasks(updatedTasks);
+  };
+
   const handleUpdateTask = (index) => {
     setTasks((prevTasks) => {
       return prevTasks.map((item, i) => {
@@ -64,7 +70,11 @@ const App = () => {
           data={tasks}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.taskItem}>
-              <Text style={tasks[index].isCompleted ? styles.doneTaskItem : null}>{item.name}</Text>
+              <TextInput
+                style={tasks[index].isCompleted ? styles.doneTaskItem : null}
+                value={item.name}
+                onChangeText={(newName) => handleEditTask(index, newName)}
+              />
             </View>
           )}
           renderHiddenItem={({ index }) => (

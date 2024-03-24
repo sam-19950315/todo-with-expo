@@ -75,6 +75,29 @@ const App = () => {
     ]);
   };
 
+  const renderItem = ({ item, index }) => {
+    return (
+      <View key={index} style={styles.taskItem}>
+        <View style={styles.taskItemList}>
+          {tasks[index].isCompleted ? (
+            <Text style={styles.doneTaskItem}>{item.name}</Text>
+          ) : (
+            <TextInput
+              style={styles.inputTaskItem}
+              value={item.name}
+              onChangeText={(newName) => handleEditTask(index, newName)}
+            />
+          )}
+        </View>
+        <View>
+          <TouchableOpacity onPress={() => onPressActionOptions(index)}>
+            <Icon style={styles.actionButton} name="more-horiz" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -93,29 +116,7 @@ const App = () => {
             onChangeText={(text) => setTask({ name: text, isCompleted: false })}
           />
         </View>
-        <FlatList
-          data={tasks}
-          renderItem={({ item, index }) => (
-            <View key={index} style={styles.taskItem}>
-              <View style={styles.taskItemList}>
-                {tasks[index].isCompleted ? (
-                  <Text style={styles.doneTaskItem}>{item.name}</Text>
-                ) : (
-                  <TextInput
-                    style={styles.inputTaskItem}
-                    value={item.name}
-                    onChangeText={(newName) => handleEditTask(index, newName)}
-                  />
-                )}
-              </View>
-              <View>
-                <TouchableOpacity onPress={() => onPressActionOptions(index)}>
-                  <Icon style={styles.actionButton} name="more-horiz" size={20} color="black" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
+        <FlatList data={tasks} renderItem={renderItem} />
       </View>
     </View>
   );

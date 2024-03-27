@@ -1,44 +1,64 @@
 import { registerRootComponent } from 'expo';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  TouchableOpacity, 
+  StyleSheet, 
+  Alert, 
+  KeyboardAvoidingView,
+} from 'react-native';
 import { Icon } from 'react-native-elements';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const App = () => {
-  const [task, setTask] = useState({ name: '' });
   const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+  const [editedTaskName, setEditedTaskName] = useState('');
+
+  const handleDragEnd = ({ data }) => {
+    setTasks(data);
+  };
 
   const handleAddTask = () => {
-    if (task.name.trim() !== '') {
-      setTasks([...tasks, task]);
-      setTask({ name: '' });
+    if (editedTaskName.trim() !== '') {
+      const taskId = tasks.length + 1;
+      const newTask = { id: taskId, name: editedTaskName, isCompleted: false };
+      setTasks([...tasks, newTask]);
+      setEditedTaskName('');
     }
   };
 
-  const handleEditTask = (index, newName) => {
-    const updatedTasks = [...tasks];
-    updatedTasks[index].name = newName;
-    setTasks(updatedTasks);
+  const handleEditTask = (id, newName) => {
+    setTasks(prevTasks => {
+      return prevTasks.map(task => {
+        if (task.id === id) {
+          return { ...task, name: newName };
+        } else {
+          return task;
+        }
+      });
+    });
   };
 
-  const onPressActionOptions = (index) => {
+  const onPressActionOptions = (id) => {
+    const task = tasks.find(task => task.id === id);
     const update = () => {
-      if (tasks[index].isCompleted) {
-        return '未完了に元に戻す';
-      } else {
-        return '完了しました';
-      }
+      return task.isCompleted ? '未完了に元に戻す' : '完了しました';
     };
 
-    Alert.alert(`${tasks[index].name}`, '', [
+    Alert.alert(`${task.name}`, '', [
       {
         text: update(),
         style: 'cancel',
-        onPress: () => handleUpdateTask(index),
+        onPress: () => handleUpdateTask(id),
       },
       {
         text: '削除します',
         style: 'destructive',
-        onPress: () => onPressRemoveAlert(index),
+        onPress: () => onPressRemoveAlert(id),
       },
       {
         text: 'キャンセル',
@@ -47,78 +67,108 @@ const App = () => {
     ]);
   };
 
-  const handleUpdateTask = (index) => {
-    setTasks((prevTasks) => {
-      return prevTasks.map((item, i) => {
-        if (i === index) {
-          return { ...item, isCompleted: !item.isCompleted };
+  const handleUpdateTask = (id) => {
+    setTasks(prevTasks => {
+      return prevTasks.map(task => {
+        if (task.id === id) {
+          return { ...task, isCompleted: !task.isCompleted };
         } else {
-          return item;
+          return task;
         }
       });
     });
   };
 
-  const handleRemoveTask = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
+  const handleRemoveTask = (id) => {
+    setTasks(prevTasks => {
+      return prevTasks.filter(task => task.id !== id);
+    });
   };
 
-  const onPressRemoveAlert = (index) => {
-    Alert.alert(`${tasks[index].name}`, `を本当に削除しますか？`, [
+  const onPressRemoveAlert = (id) => {
+    const task = tasks.find(task => task.id === id);
+    Alert.alert(`${task.name}`, `を本当に削除しますか？`, [
       {
         text: 'いいえ',
         style: 'cancel',
       },
-      { text: 'はい', onPress: () => handleRemoveTask(index) },
+      { text: 'はい', onPress: () => handleRemoveTask(id) },
     ]);
   };
 
-  const renderItem = ({ item, index }) => {
+  const handleEditPress = (taskId, taskName) => {
+    setEditingTask(taskId);
+    setEditedTaskName(taskName);
+  };
+
+  const handleEditSubmit = () => {
+    if (editedTaskName.trim() !== '') {
+      handleEditTask(editingTask, editedTaskName);
+      setEditingTask(null);
+      setEditedTaskName('');
+    }
+  };
+
+  const TaskItem = ({ item, onLongPress, onPressAction }) => {
     return (
-      <View key={index} style={styles.taskItem}>
-        <View style={styles.taskItemList}>
-          {tasks[index].isCompleted ? (
-            <Text style={styles.doneTaskItem}>{item.name}</Text>
-          ) : (
+      <TouchableOpacity onLongPress={onLongPress}>
+        <View style={styles.row}>
+          {editingTask === item.id ? (
             <TextInput
-              style={styles.inputTaskItem}
-              value={item.name}
-              onChangeText={(newName) => handleEditTask(index, newName)}
+              style={styles.taskItemList}
+              value={editedTaskName}
+              onChangeText={setEditedTaskName}
+              autoFocus={true}
+              onBlur={handleEditSubmit}
             />
+          ) : (
+            <TouchableOpacity onPress={() => handleEditPress(item.id, item.name)}>
+              <Text style={styles.taskItemList}>{item.name}</Text>
+            </TouchableOpacity>
           )}
-        </View>
-        <View>
-          <TouchableOpacity onPress={() => onPressActionOptions(index)}>
+          <TouchableOpacity onPress={() => onPressAction(item.id)}>
             <Icon style={styles.actionButton} name="more-horiz" size={20} color="black" />
           </TouchableOpacity>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Text style={styles.editText}>並べ替え</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.main}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="タスクの追加"
-            value={task.name}
-            returnKeyType="done"
-            onSubmitEditing={handleAddTask}
-            onChangeText={(text) => setTask({ name: text, isCompleted: false })}
-          />
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity>
+              <Text style={styles.editText}>並べ替え</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.main}>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                placeholder="タスクの追加"
+                value={editedTaskName}
+                onChangeText={setEditedTaskName}
+                onSubmitEditing={handleAddTask}
+              />
+            </View>
+            <DraggableFlatList
+              data={tasks}
+              renderItem={({ item, drag }) => 
+                <TaskItem
+                  item={item}
+                  onLongPress={drag}
+                  onPressAction={onPressActionOptions}
+                />
+              }
+              keyExtractor={(item) => `${item.id}`}
+              onDragEnd={handleDragEnd}
+            />
+          </View>
         </View>
-        <FlatList data={tasks} renderItem={renderItem} />
-      </View>
-    </View>
+      </GestureHandlerRootView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -157,20 +207,18 @@ const styles = StyleSheet.create({
     marginRight: 10,
     paddingHorizontal: 10,
   },
-  taskItem: {
+  row: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
   taskItemList: {
     flex: 1,
-  },
-  doneTaskItem: {
-    color: 'gray',
-    textDecorationLine: 'line-through',
-  },
-  inputTaskItem: {
-    flexGrow: 1,
-    width: '100%',
+    fontSize: 16,
   },
   actionButton: {
     padding: 10,
